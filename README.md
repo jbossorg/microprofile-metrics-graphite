@@ -1,8 +1,8 @@
 Microprofile Metrics - Graphite Integration
 ===========================================
 
-Simple Microprofile Metrics - Graphite integration.
-It just reads MP Metrics and send them via borrowed implementation from io.dropwizard.metrics:metrics-graphite (transitive dependency).
+Simple [Micro-profile Metrics](https://microprofile.io/project/eclipse/microprofile-metrics) - [Graphite](https://graphiteapp.org/) integration.
+It just reads MP Metrics and send them via borrowed implementation from `io.dropwizard.metrics:metrics-graphite` (transitive dependency).
 
 Usage
 -----
@@ -22,6 +22,26 @@ Add Dependency
 Create following Application Scoped CDI Bean which thanks to ManagedScheduledExecutorService report all metrics periodically based on configuration.
 
 ```java
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Initialized;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
+import org.eclipse.microprofile.metrics.MetricRegistry;
+import org.eclipse.microprofile.metrics.annotation.RegistryType;
+import org.jboss.logging.Logger;
+import org.jboss.microprofile.metrics.graphite.GraphiteReporter;
+import org.jboss.microprofile.metrics.graphite.MetricAttribute;
+import org.wildfly.swarm.spi.runtime.annotations.ConfigurationValue;
+
+import com.codahale.metrics.graphite.Graphite;
+
 @ApplicationScoped
 public class GraphiteManager {
 
@@ -78,7 +98,10 @@ public class GraphiteManager {
         }
         Graphite graphite = new Graphite(hostname, port);
 
-        graphiteReporter = new GraphiteReporter.Builder().prefixedWith(prefix).disabledMetricAttributes(disabledMetricAttributes).build(graphite);
+        graphiteReporter = new GraphiteReporter.Builder()
+            .prefixedWith(prefix)
+            .disabledMetricAttributes(disabledMetricAttributes)
+            .build(graphite);
 
         log.infof("Starting GraphiteReporter with initialDelaySec: %ss, intervalSec: %ss", initialDelaySec, intervalSec);
         executor.scheduleWithFixedDelay(this::reportAll, initialDelaySec, intervalSec, TimeUnit.SECONDS);
