@@ -115,5 +115,6 @@ See https://graphite.readthedocs.io/en/latest/install.html
 
 ## Deploy to repo
 
+```
 mvn deploy -Ddeploy-repo-id=$MVN_REPO_ID -Ddeploy-release-repo-url=$MVN_RELEASE_REPO_URL -Ddeploy-snapshot-repo-url=$MVN_SNAPSHOT_REPO_URL
-
+```
