@@ -17,6 +17,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <microprofile-metrics-api.version>1.1.1</microprofile-metrics-api.version>
+
+        <release.goal>install</release.goal>
     </properties>
 
     <scm>
@@ -88,6 +90,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <arguments>-Ddeploy-repo-id=$MVN_REPO_ID -Ddeploy-release-repo-url=$MVN_RELEASE_REPO_URL -Ddeploy-snapshot-repo-url=$MVN_SNAPSHOT_REPO_URL</arguments>
+                    <goals>${release.goal}</goals>
+                </configuration>
             </plugin>
         </plugins>
         <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->

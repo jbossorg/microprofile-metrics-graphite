@@ -136,6 +136,12 @@ docker run -d\
 See https://graphite.readthedocs.io/en/latest/install.html
 
 
+## Release
+
+```
+mvn clean release:prepare release:perform -Drelease.goal=install
+```
+
 ## Deploy to repo
 
 ```
