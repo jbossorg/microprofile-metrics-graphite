@@ -142,8 +142,18 @@ See https://graphite.readthedocs.io/en/latest/install.html
 mvn clean release:prepare release:perform -Drelease.goal=install
 ```
 
-## Deploy to repo
+If you want to deploy to maven repo you need to have properly set these env variables:
 
 ```
-mvn deploy -Ddeploy-repo-id=$MVN_REPO_ID -Ddeploy-release-repo-url=$MVN_RELEASE_REPO_URL -Ddeploy-snapshot-repo-url=$MVN_SNAPSHOT_REPO_URL
+MVN_REPO_ID=
+MVN_RELEASE_REPO_URL=
+MVN_SNAPSHOT_REPO_URL=
+```
+
+## Deploy to repo
+
+Useful for deploying snapshot versions
+
+```
+mvn deploy
 ```

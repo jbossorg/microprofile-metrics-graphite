@@ -17,7 +17,11 @@
 
         <microprofile-metrics-api.version>1.1.1</microprofile-metrics-api.version>
 
-        <release.goal>install</release.goal>
+        <release.goal>deploy</release.goal>
+
+        <deploy-repo-id>${env.MVN_REPO_ID}</deploy-repo-id>
+        <deploy-release-repo-url>${env.MVN_RELEASE_REPO_URL}</deploy-release-repo-url>
+        <deploy-snapshot-repo-url>${env.MVN_SNAPSHOT_REPO_URL}</deploy-snapshot-repo-url>
     </properties>
 
     <scm>
@@ -97,7 +101,6 @@
                 <configuration>
                     <tagNameFormat>@{project.version}</tagNameFormat>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
-                    <arguments>-Ddeploy-repo-id=$MVN_REPO_ID -Ddeploy-release-repo-url=$MVN_RELEASE_REPO_URL -Ddeploy-snapshot-repo-url=$MVN_SNAPSHOT_REPO_URL</arguments>
                     <goals>${release.goal}</goals>
                 </configuration>
             </plugin>
