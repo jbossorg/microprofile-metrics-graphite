@@ -64,6 +64,21 @@ public class GraphiteReporter {
         this.filter = filter;
     }
 
+    /**
+     * Report multiple registries
+     *
+     * @param registries Map of registries
+     */
+    public void reportRegistries(Map<MetricRegistry.Type, MetricRegistry> registries) {
+        registries.forEach(this::reportRegistry);
+    }
+
+    /**
+     * Report one registry
+     *
+     * @param scope registry type
+     * @param registry registry
+     */
     public void reportRegistry(MetricRegistry.Type scope, MetricRegistry registry) {
         log.debug("Report '{}' Registry", scope.getName());
         reportMetrics(scope.getName(),
