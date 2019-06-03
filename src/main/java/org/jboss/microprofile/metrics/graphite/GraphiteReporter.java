@@ -80,7 +80,6 @@ public class GraphiteReporter {
      * @param registry registry
      */
     public void reportRegistry(MetricRegistry.Type scope, MetricRegistry registry) {
-        log.debug("Report '{}' Registry", scope.getName());
         reportMetrics(scope.getName(),
                 registry.getGauges(filter),
                 registry.getCounters(filter),
@@ -94,6 +93,8 @@ public class GraphiteReporter {
             SortedMap<String, Histogram> histograms,
             SortedMap<String, Meter> meters,
             SortedMap<String, Timer> timers) {
+        log.debug("Report '{}' Registry", scope);
+
         final long timestamp = System.currentTimeMillis() / 1000;
 
         try {
@@ -102,27 +103,22 @@ public class GraphiteReporter {
             for (Map.Entry<String, Gauge> entry : gauges.entrySet()) {
                 reportGauge(scope + "." + entry.getKey(), entry.getValue(), timestamp);
             }
-            graphite.flush();
 
             for (Map.Entry<String, Counter> entry : counters.entrySet()) {
                 reportCounter(scope + "." + entry.getKey(), entry.getValue(), timestamp);
             }
-            graphite.flush();
 
             for (Map.Entry<String, Histogram> entry : histograms.entrySet()) {
                 reportHistogram(scope + "." + entry.getKey(), entry.getValue(), timestamp);
             }
-            graphite.flush();
 
             for (Map.Entry<String, Meter> entry : meters.entrySet()) {
                 reportMetered(scope + "." + entry.getKey(), entry.getValue(), timestamp);
             }
-            graphite.flush();
 
             for (Map.Entry<String, Timer> entry : timers.entrySet()) {
                 reportTimer(scope + "." + entry.getKey(), entry.getValue(), timestamp);
             }
-            graphite.flush();
         } catch (IOException e) {
             log.warn("Unable to report to Graphite", e);
         } finally {
@@ -132,6 +128,10 @@ public class GraphiteReporter {
             } catch (IOException e1) {
                 log.warn("Error flushing/closing Graphite", e1);
             }
+        }
+        log.debug("Report done. Failures: '{}'", graphite.getFailures());
+        if (graphite.getFailures() > 0) {
+            log.warn("Some data failed to send to Graphite. Failures: {}", graphite.getFailures());
         }
     }
 
