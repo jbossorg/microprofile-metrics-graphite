@@ -5,7 +5,7 @@
 
     <groupId>org.jboss.microprofile.metrics</groupId>
     <artifactId>graphite</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
 
     <name>graphite</name>
     <url>https://github.com/jbossorg/microprofile-metrics-graphite/tree/master</url>
@@ -30,7 +30,7 @@
             scm:git:git@github.com:jbossorg/microprofile-metrics-graphite.git
         </developerConnection>
         <url>https://github.com/jbossorg/microprofile-metrics-graphite/tree/maste</url>
-        <tag>1.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
