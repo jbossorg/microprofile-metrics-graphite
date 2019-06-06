@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.microprofile.metrics.Counter;
 import org.eclipse.microprofile.metrics.Gauge;
@@ -57,9 +58,18 @@ public class GraphiteReporter {
 
     private MetricFilter filter;
 
-    protected GraphiteReporter(GraphiteSender graphite, String prefix, Set<MetricAttribute> disabledMetricAttributes, MetricFilter filter) {
+    private final long durationFactor;
+    private final String durationUnit;
+    private final long rateFactor;
+    private final String rateUnit;
+
+    protected GraphiteReporter(GraphiteSender graphite, String prefix, TimeUnit rateUnit, TimeUnit durationUnit, Set<MetricAttribute> disabledMetricAttributes, MetricFilter filter) {
         this.graphite = graphite;
         this.prefix = prefix;
+        this.rateFactor = rateUnit.toSeconds(1);
+        this.rateUnit = calculateRateUnit(rateUnit);
+        this.durationFactor = durationUnit.toNanos(1);
+        this.durationUnit = durationUnit.toString().toLowerCase(Locale.US);
         this.disabledMetricAttributes = disabledMetricAttributes;
         this.filter = filter;
     }
@@ -204,11 +214,11 @@ public class GraphiteReporter {
     }
 
     protected double convertDuration(double duration) {
-        return duration;
+        return duration / durationFactor;
     }
 
     protected double convertRate(double rate) {
-        return rate;
+        return rate * rateFactor;
     }
 
     private String format(Object o) {
@@ -252,8 +262,15 @@ public class GraphiteReporter {
         return disabledMetricAttributes;
     }
 
+    private String calculateRateUnit(TimeUnit unit) {
+        final String s = unit.toString().toLowerCase(Locale.US);
+        return s.substring(0, s.length() - 1);
+    }
+
     public static class Builder {
         private String prefix = "";
+        private TimeUnit rateUnit = TimeUnit.SECONDS;
+        private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
         private Set<MetricAttribute> disabledMetricAttributes = new HashSet<>();
         private MetricFilter filter = MetricFilter.ALL;
 
@@ -265,6 +282,28 @@ public class GraphiteReporter {
          */
         public Builder prefixedWith(String prefix) {
             this.prefix = prefix;
+            return this;
+        }
+
+        /**
+         * Convert rates to the given time unit.
+         *
+         * @param rateUnit a unit of time
+         * @return {@code this}
+         */
+        public Builder convertRatesTo(TimeUnit rateUnit) {
+            this.rateUnit = rateUnit;
+            return this;
+        }
+
+        /**
+         * Convert durations to the given time unit.
+         *
+         * @param durationUnit a unit of time
+         * @return {@code this}
+         */
+        public Builder convertDurationsTo(TimeUnit durationUnit) {
+            this.durationUnit = durationUnit;
             return this;
         }
 
@@ -295,6 +334,8 @@ public class GraphiteReporter {
             return new GraphiteReporter(
                     graphite,
                     prefix,
+                    rateUnit,
+                    durationUnit,
                     disabledMetricAttributes,
                     filter);
         }
