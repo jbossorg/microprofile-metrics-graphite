@@ -155,6 +155,6 @@ MVN_SNAPSHOT_REPO_URL=
 Useful for deploying snapshot versions
 
 ```
+cd target/checkout
 mvn deploy -Ddeploy-repo-id=$MVN_REPO_ID -Ddeploy-release-repo-url=$MVN_RELEASE_REPO_URL -Ddeploy-snapshot-repo-url=$MVN_SNAPSHOT_REPO_URL
-
 ```
